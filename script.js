@@ -1,103 +1,92 @@
-//your JS code here. If required.
-// Data for the questions
 const questions = [
   {
-    question: "Which language runs in a web browser?",
-    a: "Java",
-    b: "C",
-    c: "Python",
-    d: "JavaScript",
-    correct: "d",
+    question: "What is the capital of France?",
+    choices: ["Paris", "London", "Berlin", "Madrid"],
+    answer: "Paris",
   },
   {
-    question: "What does CSS stand for?",
-    a: "Central Style Sheets",
-    b: "Cascading Style Sheets",
-    c: "Cascading Simple Sheets",
-    d: "Cars SUVs Sailboats",
-    correct: "b",
+    question: "What is the highest mountain in the world?",
+    choices: ["Everest", "Kilimanjaro", "Denali", "Matterhorn"],
+    answer: "Everest",
   },
   {
-    question: "What does HTML stand for?",
-    a: "Hypertext Markup Language",
-    b: "Hypertext Markdown Language",
-    c: "Hyperloop Machine Language",
-    d: "Helicopters Terminals Motorboats Lamborginis",
-    correct: "a",
+    question: "What is the largest country by area?",
+    choices: ["Russia", "China", "Canada", "United States"],
+    answer: "Russia",
   },
   {
-    question: "What year was JavaScript launched?",
-    a: "1996",
-    b: "1995",
-    c: "1994",
-    d: "none of the above",
-    correct: "b",
-  }
+    question: "Which is the largest planet in our solar system?",
+    choices: ["Earth", "Jupiter", "Mars"],
+    answer: "Jupiter",
+  },
+  {
+    question: "What is the capital of Canada?",
+    choices: ["Toronto", "Montreal", "Vancouver", "Ottawa"],
+    answer: "Ottawa",
+  },
 ];
 
-// Initialize variables
-let currentQuestion = 0;
-let score = 0;
+const submitButton = document.getElementById("submit");
+const questionsElement = document.getElementById("questions");
 
-// Get DOM elements
-const quiz = document.getElementById("quiz");
-const result = document.getElementById("result");
-const questionEl = document.getElementById("question");
-const aText = document.getElementById("a_text");
-const bText = document.getElementById("b_text");
-const cText = document.getElementById("c_text");
-const dText = document.getElementById("d_text");
-const submitBtn = document.getElementById("submit");
-const resetBtn = document.getElementById("reset");
-const scoreEl = document.getElementById("score");
+// Get the saved progress from session storage
+const savedProgress = JSON.parse(sessionStorage.getItem("progress"));
+// Submit the quiz and show the score
+submitButton.addEventListener("click", showScore);
 
-// Function to show current question
-function showQuestion() {
-  const currentQ = questions[currentQuestion];
-  questionEl.textContent = currentQ.question;
-  aText.textContent = currentQ.a;
-  bText.textContent = currentQ.b;
-  cText.textContent = currentQ.c;
-  dText.textContent = currentQ.d;
+// If there is saved progress, use it. Otherwise, start from the beginning.
+let userAnswers = savedProgress ? savedProgress : [];
+
+// Display the quiz questions and choices
+function renderQuestions() {
+  for (let i = 0; i < questions.length; i++) {
+    const question = questions[i];
+    const questionElement = document.createElement("div");
+    const questionText = document.createTextNode(question.question);
+    questionElement.appendChild(questionText);
+    for (let j = 0; j < question.choices.length; j++) {
+      const choice = question.choices[j];
+      const choiceElement = document.createElement("input");
+      choiceElement.setAttribute("type", "radio");
+      choiceElement.setAttribute("name", `question-${i}`);
+      choiceElement.setAttribute("value", choice);
+      if (userAnswers[i] === choice) {
+        choiceElement.setAttribute("checked", true);
+      }
+      const choiceText = document.createTextNode(choice);
+      questionElement.appendChild(choiceElement);
+      questionElement.appendChild(choiceText);
+    }
+    questionsElement.appendChild(questionElement);
+  }
 }
 
-// Function to reset the quiz
-function resetQuiz() {
-  currentQuestion = 0;
-  score = 0;
-  showQuestion();
-  quiz.classList.remove("hidden");
-  result.classList.add("hidden");
+// Save the user's answer when they select a choice
+function saveAnswers() {
+  const choiceElements = document.querySelectorAll("input[type=radio]");
+  for (let i = 0; i < choiceElements.length; i++) {
+    const choiceElement = choiceElements[i];
+    choiceElement.addEventListener("change", function (event) {
+      const answer = event.target.value;
+      userAnswers[parseInt(event.target.name.split("-")[1], 10)] = answer;
+      sessionStorage.setItem("progress", JSON.stringify(userAnswers));
+    });
+  }
 }
 
-// Event listener for submit button
-submitBtn.addEventListener("click", () => {
-  const selected = document.querySelector('input[name="answer"]:checked');
-  if (!selected) {
-    alert("Please select an option.");
-    return;
+function showScore() {
+  let score = 0;
+  for (let i = 0; i < questions.length; i++) {
+    const question = questions[i];
+    const userAnswer = userAnswers[i];
+    if (userAnswer === question.answer) {
+      score++;
+    }
   }
-  const answer = selected.value;
-  if (answer === questions[currentQuestion].correct) {
-    score++;
-  }
-  currentQuestion++;
-  if (currentQuestion < questions.length) {
-    showQuestion();
-  } else {
-    console.log("score:", score);
-    scoreEl.textContent = score;
-    console.log("scoreEl:", scoreEl);
-    quiz.classList.add("hidden");
-    result.classList.remove("hidden");
-    console.log("quiz:", quiz);
-    console.log("result:", result);
-  }
-});
+  localStorage.setItem("score", score);
+  const scoreElement = document.getElementById("score");
+  scoreElement.innerText = `Your score is ${score} out of ${questions.length}.`;
+}
 
-
-// Event listener for reset button
-resetBtn.addEventListener("click", resetQuiz);
-
-// Show first question
-showQuestion();
+renderQuestions();
+saveAnswers();
