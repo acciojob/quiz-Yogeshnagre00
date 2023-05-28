@@ -1,17 +1,47 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <!-- do not change this code -->
-    <h1>Quiz</h1>
-    <div id="questions"></div>
-    <button id="submit">Submit</button>
-    <div id="score"></div>
+<head>
+	<link rel="stylesheet" href="styles.css">
+</head>
 
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+<body>
+	<!-- the entire body must be written by student -->
+	<div class="quix-container" id="quiz">
+        <div class="quiz-header">
+            <h2 id="question">Question Text</h2>
+
+            <ul>
+                <li>
+                    <input type="radio" name="answer" id="a" class="answer">
+                    <label for="a" id="a_text">Answer</label>
+                </li>
+                
+                <li>
+                    <input type="radio" name="answer" id="b" class="answer">
+                    <label for="b" id="b_text">Answer</label>
+                </li>
+
+                <li>
+                    <input type="radio" name="answer" id="c" class="answer">
+                    <label for="c" id="c_text">Answer</label>
+                </li>
+
+                <li>
+                    <input type="radio" name="answer" id="d" class="answer">
+                    <label for="d" id="d_text">Answer</label>
+                </li>
+            </ul>
+        </div>
+        <button id="submit">Submit</button>
+    </div>
+
+
+	
+    <script type="text/javascript" src="./script.js">
+</script>
+
+</body>
+
 </html>
