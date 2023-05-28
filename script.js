@@ -1,113 +1,103 @@
 //your JS code here. If required.
-//your JS code here. If required.
+// Data for the questions
+const questions = [
+  {
+    question: "Which language runs in a web browser?",
+    a: "Java",
+    b: "C",
+    c: "Python",
+    d: "JavaScript",
+    correct: "d",
+  },
+  {
+    question: "What does CSS stand for?",
+    a: "Central Style Sheets",
+    b: "Cascading Style Sheets",
+    c: "Cascading Simple Sheets",
+    d: "Cars SUVs Sailboats",
+    correct: "b",
+  },
+  {
+    question: "What does HTML stand for?",
+    a: "Hypertext Markup Language",
+    b: "Hypertext Markdown Language",
+    c: "Hyperloop Machine Language",
+    d: "Helicopters Terminals Motorboats Lamborginis",
+    correct: "a",
+  },
+  {
+    question: "What year was JavaScript launched?",
+    a: "1996",
+    b: "1995",
+    c: "1994",
+    d: "none of the above",
+    correct: "b",
+  }
+];
 
-        const quizData = [
-            {
-                question: "Which language runs in a web browser?",
-                a: "Java",
-                b: "C",
-                c: "Python",
-                d: "JavaScript",
-                correct: "d"
-            },
-            {
-                question: "What does CSS stand for?",
-                a: "Central Style Sheets",
-                b: "Cascading Style Sheets",
-                c: "Cascading Simple Sheets",
-                d: "Cars SUVs Sailboats",
-                correct: "b"
-            },
-            {
-                question: "What does HTML stand for?",
-                a: "Hypertext Markup Language",
-                b: "Hypertext Markdown Language",
-                c: "Hyperloop Machine Language",
-                d: "Helicopters Terminals Motorboats Lamborghinis",
-                correct: "a"
-            },
-            {
-                question: "What year was JavaScript launched?",
-                a: "1996",
-                b: "1995",
-                c: "1994",
-                d: "none of the above",
-                correct: "b"
-            }
-        ];
+// Initialize variables
+let currentQuestion = 0;
+let score = 0;
 
-        const quizContainer = document.getElementById('quiz');
-        const questionElement = document.getElementById('question');
-        const optionAElement = document.getElementById('a_text');
-        const optionBElement = document.getElementById('b_text');
-        const optionCElement = document.getElementById('c_text');
-        const optionDElement = document.getElementById('d_text');
-        const optionElements = document.querySelectorAll('input[type="radio"]');
-        const submitButton = document.getElementById('submit');
-        const resultElement = document.getElementById('result');
-        const reloadButton = document.getElementById('reload');
+// Get DOM elements
+const quiz = document.getElementById("quiz");
+const result = document.getElementById("result");
+const questionEl = document.getElementById("question");
+const aText = document.getElementById("a_text");
+const bText = document.getElementById("b_text");
+const cText = document.getElementById("c_text");
+const dText = document.getElementById("d_text");
+const submitBtn = document.getElementById("submit");
+const resetBtn = document.getElementById("reset");
+const scoreEl = document.getElementById("score");
 
-        let currentQuestion = 0;
-        let score = 0;
+// Function to show current question
+function showQuestion() {
+  const currentQ = questions[currentQuestion];
+  questionEl.textContent = currentQ.question;
+  aText.textContent = currentQ.a;
+  bText.textContent = currentQ.b;
+  cText.textContent = currentQ.c;
+  dText.textContent = currentQ.d;
+}
 
-        function loadQuestion() {
-            const currentQuizData = quizData[currentQuestion];
-            questionElement.textContent = currentQuizData.question;
-            optionAElement.textContent = currentQuizData.a;
-            optionBElement.textContent = currentQuizData.b;
-            optionCElement.textContent = currentQuizData.c;
-            optionDElement.textContent = currentQuizData.d;
-            deselectOptions();
-        }
+// Function to reset the quiz
+function resetQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  showQuestion();
+  quiz.classList.remove("hidden");
+  result.classList.add("hidden");
+}
 
-        function deselectOptions() {
-            optionElements.forEach(option => {
-                option.checked = false;
-            });
-        }
+// Event listener for submit button
+submitBtn.addEventListener("click", () => {
+  const selected = document.querySelector('input[name="answer"]:checked');
+  if (!selected) {
+    alert("Please select an option.");
+    return;
+  }
+  const answer = selected.value;
+  if (answer === questions[currentQuestion].correct) {
+    score++;
+  }
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    showQuestion();
+  } else {
+    console.log("score:", score);
+    scoreEl.textContent = score;
+    console.log("scoreEl:", scoreEl);
+    quiz.classList.add("hidden");
+    result.classList.remove("hidden");
+    console.log("quiz:", quiz);
+    console.log("result:", result);
+  }
+});
 
-        function getSelectedOption() {
-            let selectedOption = undefined;
-            optionElements.forEach(option => {
-                if (option.checked) {
-                    selectedOption = option.id;
-                }
-            });
-            return selectedOption;
-        }
 
-        function submitAnswer() {
-            const selectedOption = getSelectedOption();
-            if (selectedOption) {
-                if (selectedOption === quizData[currentQuestion].correct) {
-                    score++;
-                }
-                currentQuestion++;
-                if (currentQuestion < quizData.length) {
-                    loadQuestion();
-                } else {
-                    showResult();
-                }
-            }
-        }
+// Event listener for reset button
+resetBtn.addEventListener("click", resetQuiz);
 
-        function showResult() {
-            quizContainer.style.display = 'none';
-            resultElement.textContent = `You scored ${score} out of ${quizData.length}.`;
-            reloadButton.style.display = 'block';
-        }
-
-        function reloadQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            quizContainer.style.display = 'block';
-            resultElement.textContent = '';
-            reloadButton.style.display = 'none';
-            loadQuestion();
-        }
-
-        submitButton.addEventListener('click', submitAnswer);
-        reloadButton.addEventListener('click', reloadQuiz);
-
-        loadQuestion();
-    
+// Show first question
+showQuestion();
